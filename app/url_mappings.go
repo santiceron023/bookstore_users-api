@@ -8,7 +8,13 @@ import (
 func mapUrls()  {
 
 	router.GET("/ping", ping.Ping)
-	router.POST("/users", users.CreateUser)
-	router.GET("/users/:userId", users.GetUser)
+	router.GET("/users/:userId", users.Get)
+	router.GET("/internal/users/search", users.Search)
+
+	router.POST("/users", users.Create)
+	router.PUT("/users/:userId", users.Update)
+	router.PATCH("/users/:userId", users.Update)
+
+	router.DELETE("/users/:userId", users.Delete)
 
 }
