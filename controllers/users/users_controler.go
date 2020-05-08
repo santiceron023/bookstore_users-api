@@ -28,7 +28,7 @@ func Create(ginContext *gin.Context) {
 		ginContext.JSON(restError.Code, restError)
 		return
 	}
-	result, saveErr := services.CreateUser(user)
+	result, saveErr := services.UsersService.CreateUser(user)
 	if saveErr != nil {
 		ginContext.JSON(saveErr.Code, saveErr)
 		return
@@ -44,7 +44,7 @@ func Get(ginContext *gin.Context) {
 		return
 	}
 
-	result, restErr := services.GetUser(userId)
+	result, restErr := services.UsersService.GetUser(userId)
 	if restErr != nil {
 		ginContext.JSON(restErr.Code, restErr)
 		return
@@ -71,7 +71,7 @@ func Update(ginContext *gin.Context) {
 
 	partial := ginContext.Request.Method == http.MethodPatch
 
-	result, updateErr := services.UpdateUser(partial, user)
+	result, updateErr := services.UsersService.UpdateUser(partial, user)
 	if updateErr != nil {
 		ginContext.JSON(updateErr.Code, updateErr)
 		return
@@ -87,7 +87,7 @@ func Delete(ginContext *gin.Context) {
 		return
 	}
 
-	if err := services.DeleteUSer(userId); err != nil {
+	if err := services.UsersService.DeleteUSer(userId); err != nil {
 		ginContext.JSON(err.Code, err)
 	}
 
@@ -96,11 +96,11 @@ func Delete(ginContext *gin.Context) {
 
 func Search(ctx *gin.Context) {
 	status := ctx.Query("status")
-	users, findErr := services.FindByStatus(status)
+	users, findErr := services.UsersService.Search(status)
 	if findErr != nil {
 		ctx.JSON(findErr.Code, findErr)
 		return
 	}
-	users.Marshall(ctx.GetHeader("x-public") == "true")
-	ctx.JSON(http.StatusOK, users)
+	result := users.Marshall(ctx.GetHeader("x-public") == "true")
+	ctx.JSON(http.StatusOK, result)
 }
