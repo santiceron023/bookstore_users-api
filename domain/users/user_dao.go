@@ -2,7 +2,6 @@ package users
 
 import (
 	"fmt"
-	"github.com/santiceron023/FUENTE/bookstore_utils-go/rest_errors"
 	"github.com/santiceron023/bookstore_users-api/datasources/mysql/users_db"
 	"github.com/santiceron023/bookstore_users-api/logger"
 	"github.com/santiceron023/bookstore_users-api/utils/date_utils"
@@ -125,21 +124,21 @@ func (user *User) FindByStatus(status string) ([]User, *errors.RestError) {
 	return results, nil
 }
 
-func (user *User) FindByEmailAndPassword() rest_errors.RestErr {
+func (user *User) FindByEmailAndPassword() *errors.RestError {
 	stmt, err := users_db.Client.Prepare(queryFindByEmailAndPassword)
 	if err != nil {
 		logger.Error("error when trying to prepare get user by email and password statement", err)
-		return rest_errors.NewInternalServerError("error when tying to find user", err)
+		return errors.NewInternalServerError("error when tying to find user")
 	}
 	defer stmt.Close()
 
 	result := stmt.QueryRow(user.Email, user.Password, StatusActive)
 	if getErr := result.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.DateCreated, &user.Status); getErr != nil {
 		if strings.Contains(getErr.Error(), mysql_utils.ErrorNoRows) {
-			return rest_errors.NewNotFoundError("invalid user credentials")
+			return errors.NewNotFoundError("invalid user credentials")
 		}
-		logger.Error("error when trying to get user by email and password", getErr)
-		return rest_errors.NewInternalServerError("error when tying to find user", getErr)
+		//logger.Error("error when trying to get user by email and password")
+		return errors.NewInternalServerError("error when tying to find user")
 	}
 	return nil
 }

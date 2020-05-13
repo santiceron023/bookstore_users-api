@@ -1,7 +1,6 @@
 package services
 
 import (
-	"github.com/santiceron023/FUENTE/bookstore_utils-go/rest_errors"
 	"github.com/santiceron023/bookstore_users-api/domain/users"
 	"github.com/santiceron023/bookstore_users-api/utils/crypto_utils"
 	"github.com/santiceron023/bookstore_users-api/utils/errors"
@@ -15,10 +14,10 @@ type usersServiceInterface interface {
 	CreateUser(users.User) (*users.User, *errors.RestError)
 	GetUser(int64) (*users.User, *errors.RestError)
 	UpdateUser(bool, users.User) (*users.User, *errors.RestError)
-	LoginUser(users.LoginRequest) (*users.User, rest_errors.RestErr)
+	LoginUser(users.LoginRequest) (*users.User, *errors.RestError)
 }
 
-func (s *usersService) LoginUser(request users.LoginRequest) (*users.User, rest_errors.RestErr) {
+func (s *usersService) LoginUser(request users.LoginRequest) (*users.User, *errors.RestError) {
 	dao := &users.User{
 		Email:    request.Email,
 		Password: crypto_utils.GetMd5(request.Password),
